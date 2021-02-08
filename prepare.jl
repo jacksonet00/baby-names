@@ -21,7 +21,7 @@ insert = """
 INSERT INTO names
 (year, name, sex, num)
 VALUES
-(2000, ?, ?, ?);
+(?, ?, ?, ?);
 """
 insert_sql = DBInterface.prepare(db, insert)
 
@@ -34,7 +34,7 @@ for f in rdr.files
       f_csv = CSV.File(f; header=false, footerskip=1)
       println("Loading year $(year) from $(f.name)...")
       for row in f_csv
-         DBInterface.execute(insert_sql, [row[1], row[2], row[3]])
+         DBInterface.execute(insert_sql, [year, row[1], row[2], row[3]])
       end
       println("Completed :)")
    end

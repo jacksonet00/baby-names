@@ -16,8 +16,8 @@ function plot(db_name, name, sex)
 
    data = DBInterface.execute(db, query) |> DataFrame
 
-   plt = Gadfly.plot(data, x=:Year, y=:Frequency, Geom.bar)
-   normalized_plt = Gadfly.plot(data, x=:Year, y=:Frequency, Geom.bar)
+   plt = Gadfly.plot(data, x=:Year, y=:Frequency, Geom.bar, Theme(panel_fill=colorant"black", default_color=colorant"orange"))
+   normalized_plt = Gadfly.plot(data, x=:Year, y=:Frequency, Geom.bar, Theme(panel_fill=colorant"black", default_color=colorant"orange"))
    fig = Gadfly.hstack(plt, normalized_plt)
    img = SVG("plot.svg")
    draw(img, fig)

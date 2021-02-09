@@ -1,8 +1,9 @@
 using ZipFile
 using SQLite
 using CSV
+using DataFrames
 
-drop_statement = """
+drop_tables = """
 DROP TABLE IF EXISTS names;
 """
 
@@ -14,7 +15,8 @@ sex TEXT,
 num INTEGER
 );
 """
-insert_statement = """
+
+prepared_statement = """
 INSERT INTO names
 (year, name, sex, num)
 VALUES
@@ -25,21 +27,21 @@ function load(zip_archive, db_name)
    reader = ZipFile.Reader(zip_archive)
    db = SQLite.DB(db_name)
 
-   DBInterface.execute(db, drop_statement)
+   DBInterface.execute(db, drop_tables)
    DBInterface.execute(db, schema)
 
-   insert_sql = DBInterface.prepare(db, insert_statement)
+   insertion = DBInterface.prepare(db, prepared_statement)
 
-   for f in reader.files
+   for file in reader.files
       if endswith(f.name, ".txt")
          year = split(split(split(f.name, "/")[end], ".")[1], "yob")[end]
-         f_csv = CSV.File(f; header=false, footerskip=1)
+         csv_file = CSV.File(f; header=false, footerskip=1)
          println("Loading data from $(year)...")
-         for row in f_csv
-            DBInterface.execute(insert_sql, [year, row[1], row[2], row[3]])
+         for row in csv_file
+            DBInterface.execute(insertion, [year, row[1], row[2], row[3]])
          end
       end
-   end      
+   end
 
    close(reader)
    close(db)

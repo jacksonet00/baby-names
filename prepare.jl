@@ -33,13 +33,14 @@ function load(zip_archive, db_name)
    insertion = DBInterface.prepare(db, prepared_statement)
 
    for file in reader.files
-      if endswith(f.name, ".txt")
-         year = split(split(split(f.name, "/")[end], ".")[1], "yob")[end]
-         csv_file = CSV.File(f; header=false, footerskip=1)
-         println("Loading data from $(year)...")
+      if endswith(file.name, ".txt")
+         year = match(r"[0-9]{1,45}", file.name).match
+         csv_file = CSV.File(file; header=false, footerskip=1)
+         SQLite.transaction(db)
          for row in csv_file
             DBInterface.execute(insertion, [year, row[1], row[2], row[3]])
          end
+         SQLite.commit(db)
       end
    end
 

@@ -134,5 +134,5 @@ function get_similar_names(db_name)
     return [girl_index_to_name[(partition - 1) * Int(round(Ng / 10)) + index2], boy_index_to_name[(partition - 1) * Int(round(Nb / 10)) + index1], max_distance]
 end
 
-names = get_similar_names("names.db")
+names = get_similar_names(ARGS[1])
 println("Girl name: $(names[1])\nBoy name: $(names[2])\nMax distance: $(names[3])")
